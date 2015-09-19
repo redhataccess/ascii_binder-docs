@@ -4,7 +4,7 @@ ascii_binder:
   author: AsciiBinder Team <team@asciibinder.org>
   site: main
   site_name: System Documentation
-  site_url: https://asciibinder.org/
+  site_url: http://asciibinder.org/
   branches:
     master:
       name: Latest
