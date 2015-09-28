@@ -26,3 +26,13 @@ Dir: welcome
 Topics:
   - Name: Welcome
     File: index
+  - Name: Philosophy
+    File: philosophy
+
+---
+Name: Guides
+Dir: guides
+Topics:
+  - Name: Authors
+    File: user_guide
+
