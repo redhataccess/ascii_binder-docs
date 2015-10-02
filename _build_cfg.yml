@@ -21,7 +21,7 @@
 # The ordering of the records in this document determines the ordering of the
 # topic groups and topics on the main page.
 ---
-Name: AsciiBinder Documentation
+Name: Welcome
 Dir: welcome
 Topics:
   - Name: Welcome
@@ -33,6 +33,6 @@ Topics:
 Name: Guides
 Dir: guides
 Topics:
-  - Name: Authors
+  - Name: For Authors
     File: user_guide
 

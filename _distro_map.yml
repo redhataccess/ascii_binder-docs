@@ -1,9 +1,9 @@
 ---
 ascii_binder:
-  name: AsciiBinder
+  name: Documentation
   author: AsciiBinder Team <team@asciibinder.org>
   site: main
-  site_name: System Documentation
+  site_name: AsciiBinder
   site_url: http://asciibinder.org/
   branches:
     master:
