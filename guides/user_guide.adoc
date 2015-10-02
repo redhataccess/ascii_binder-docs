@@ -1,0 +1,128 @@
+= AsciiBinder for Authors
+{product-author}
+{product-version}
+:data-uri:
+:icons:
+
+If you want to contribute documentation to a project that manages its docs with AsciiBinder, you've come to the right place.
+
+== Installing AsciiBinder
+AsciiBinder is distributed as a Ruby gem, so use the `gem` command to install it:
+
+----
+$ gem install ascii_binder
+----
+
+But be aware of a few prerequisites:
+
+1. **Pandoc**: AsciiBinder uses the awesome http://asciidoctor.org/[AsciiDoctor] processor to generate pages, and AsciiDoctor depends upon http://pandoc.org/[Pandoc]. So, make sure `pandoc` is installed on your system.
+2. **Java**: AsciiBinder bundles http://ditaa.sourceforge.net/[ditaa] for ASCII-based diagramming support. However, ditaa depends upon a Java runtime to transform ASCII diagrams into image files. So, make sure you have a JVM installed (http://openjdk.java.net/[OpenJDK] works fine) and set the `$JAVA_HOME` environment variable so that ditaa can find the JVM.
+
+== Making a Copy of an Existing Docs Repo
+If you already know how to use https://git-scm.com/[git], then this is going to sound very familiar. If not, here's the full walk-through:
+
+1. Install git.
+2. If the docs source is hosted on GitHub, you will probably next need to https://help.github.com/articles/fork-a-repo/[fork] the docs repo.
+3. Using git, clone the repo (either the original or your fork, as appropriate) to your local system: `git clone <repo URL>`
+
+If the project that you are working in already has version branches, then you will want to set up local copies of those as well. After you have cloned the repo to your local system, you can track those branches with the command:
+
+----
+$ git checkout -b <local_branch_name> <remote_repo>/<remote_branch_name>
+----
+
+== Building the Docs
+Transforming an AsciiBinder repo into a bunch of documentation is pretty easy:
+
+----
+$ asciibinder build <repo_dir>
+----
+
+If you run this from the root directory of your repo, you can simply run:
+
+----
+$ asciibinder
+----
+
+...because it will assume the current repo if none is specified, and it will assume `build` if no operation is specified.
+
+=== Anatomy of a Build
+When you run a build, AsciiBinder reads two specially named files in your docs repo, and processes the repo accordingly. If your current working branch contains uncommitted changes, those files are stashed before AsciiBinder switches to other branches, and restored at the end of the build operation.
+
+==== The Distribution Config File: _distro_cfg.yml
+The distribution config file tells AsciiBinder which branches in the repo will be processed. For the full details of how this file works, there is an appendix with all of the particulars. At build time, here's the important thing:
+
+**AsciiBinder only reads `_distro_cfg.yml` once: from the current working branch.**
+
+This is important to understand, because AsciiBinder by its nature is going to switch between git branches as it runs. In each branch, the contents of the distribution config file will probably be different. So AsciiBinder assumes that your current working branch is the one that you care about when it comes to building docs sets.
+
+==== The Build Config File: _build_cfg.yml
+The build config file tells AsciiBinder which _topic groups_ and _topics_ to generate. As with the distribution config file, there is an appendix that details the composition of this file. However, unlike with the distribution config file:
+
+**AsciiBinder re-reads `_build_cfg.yml` for every git branch.**
+
+This should be pretty self-explanatory. Back when you published version X of your docs, you had one set of files; now that you're on to version Y, the files may have been shuffled added to, removed, etc. So each time AsciiBinder switches branches, it re-reads this file to find out which files to process.
+
+And while we're on the subject:
+
+**AsciiBinder only generates files that are listed in the `_build_cfg.yml` file.**
+
+This is important to understand, because simply adding an `.adoc` file to your repo will not automatically add it to your generated output. You also need to create an entry for it in the build config file. When you run AsciiBinder, it will warn you about files on each branch that are not included in the branch's build config file, but it will not generate them.
+
+==== Build Output
+AsciiBinder starts by reading the distro config file and then it processes docs multiple times - once for every distribution defined in the distro config file, multiplied by every branch. You can see the HTML produced by this process under the `_preview` directory in the repo.
+
+Previews are organized by _distro_ and then by _branch_; the generic path to a given version of the docs is:
+
+`<docs_repo_dir>/_preview/<distro>/<branch_dir_name>`
+
+NOTE: The branch_dir_name, which comes from the distro config file, is not necessarily identical to the branch name.
+
+Following on this build behavior, the simplest way to inspect the output of your build is to open a web browser and navigate to the file that you want, in the distro / branch path that you are working with. However, have a look at the section on Instant Preview for information on how to get instant feedback on your modifications.
+
+== Instant Preview with LiveReload
+If you are interested in seeing instant feedback on your changes to an AsciiDoc file, you can take advantage of AsciiBinder's live preview capability by running:
+
+----
+$ asciibinder watch
+----
+
+When you do this, you are starting a https://rubygems.org/gems/guard[Guard] process that runs in the foreground on that terminal. To gain the full effects of the guard, first you will need to prepare your web browser with a http://livereload.com/[LiveReload] plugin - http://livereload.com/extensions/[**check here for the most up-to-date plugins and instructions**].
+
+=== Working with Instant Preview
+With `asciibinder watch` running in a terminal, and an HTML file from your `_preview` area open in a webbrowser, you can enable LiveReload in the browser. Once you have done that, any time you save the source `.adoc` file for the HTML page that you are watching, AsciiBinder will automatically rebuild the page and your browser will update with the changes. If you are new to AsciiDoc, or if you are trying out a new layout, this is a helpful way of getting instant feedback on your work.
+
+=== Exiting Instant Preview
+To stop the `asciibinder watch` process, you can either:
+
+* Type `exit` and hit `<ENTER>` or
+* Press `<CTRL>+C` to break out of the Guard shell
+
+== Packaging Sites for Publication
+The site packaging action performs three distinct operations:
+
+1. Clean out previously generated content from the `_preview` and `_package` directories
+2. Build the docs as per `asciibinder build`
+3. Based on rules in the `_distro_config.yml` file, selectively copy content from the `_preview` area into the `_package` area on a site-by-site basis.
+
+The result of this is that the `_package` are will contain a subdirectory for each site that is being built, and all of the files in those site directories will be ready for direct copying onto the site's web server.
+
+Invoking the package action is very simple:
+
+----
+$ asciibinder package
+----
+
+Presently, AsciiBinder does _not_ include logic to actually push the files out to the hosting server. This is better done with a CI system (like Jenkins) that can rebuild the docs in reponse to changes in the source code and then automatically redeploy the websites using something like `rsync`.
+
+For information on how to configure a site, refer to the Maintainer's Guide.
+
+== Cleaning Out Build & Package Artifacts
+To clean up the the contents of the `preview` and `_package` directories and start fresh, you can run:
+
+----
+$ asciibinder clean
+----
+
+Note that this happens automatically when you run `asciibinder package`
+

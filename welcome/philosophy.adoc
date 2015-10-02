@@ -1,0 +1,27 @@
+= The AsciiBinder Design Philosophy
+{product-author}
+{product-version}
+:data-uri:
+:icons:
+
+AsciiBinder is the result of an ongoing partnership between the engineering team behind http://www.projectatomic.io/[Project Atomic] and https://openshift.com/[OpenShift] and the writers that provide the documentation for these projects. In developing AsciiBinder, several important design goals had to be met:
+
+=== True Single-Sourced Documentation
+OpenShift Origin and OpenShift Enterprise share the same code base, and the overlap in documentation is better than 90%. So why would we want to maintain two sepearate repositiories for these docs? Wouldn't it be easier if there was a way to keep all of those docs in the same place? We needed to make it manageable to do this.
+
+As it turns out, this is a problem that software developers have had as well, and over the years they've solved it a number of different ways. Right now, one very popular way of solving this is with https://git-scm.com/[git]. Git enables users to track multiple branches of the same source code in a single place. This branch tracking capability is the basis of documentation version management in AsciiBinder.
+
+=== Low Bar for Entry for New Contributors
+As part of encouraging contributions both from the community and from the engineers writing the code, we needed to choose a set of tools that would be familiar, or at a minimum, very easy to learn. Most open source contributors are comfortable working in plain text files, and most development environments support a wide variety of contextual handlers for various types of text files.
+
+[NOTE]
+.Why AsciiDoc instead of Markdown?
+====
+http://daringfireball.net/projects/markdown/[Markdown] is incredibly elegant in its simplicity, and it is an excellent tool for authoring basic articles. However, it doesn't support the full range of expression that writers need to create the most effective software documentation. In addition to offering more formatting options, http://asciidoc.org/[AsciiDoc] also supports http://www.methods.co.nz/asciidoc/chunked/ch21.html#_conditional_inclusion_macros[conditional inclusion macros], which are critical to the way that AsciiBinder works.
+====
+
+=== A Good Experience for Professional Writers and Docs Managers
+It's all well and good to make a system that encourages contribution from developers by being "where they live". But writers need to be able to create a pipeline around refining those contributions. Additionally, writers appreciate having ways to preview the finished product without having to wait for a build system or CI system to tell them that their formatting is correct. AsciiBinder takes advantage of git https://help.github.com/articles/using-pull-requests/[pull requests] as a means of refining content before it becomes part of the docs, and AsciiBinder employs https://rubygems.org/gems/guard[Guard] and http://livereload.com/[LiveReload] to provide a WYSIWYG experience for writers using their web browser and local files.
+
+=== In Summary, a Better Way to Manage Software Docs
+These days, there are a lot of powerful documentation systems leveraging Markdown and AsciiDoc to generate entire libraries. AsciiBinder is different because it specifically incorporates git and AsciiDoc conditionals to satisfy the specific needs of software documentation. If your team is struggling to manage docs sets for different versions and distributions of your software projects, AsciiBinder may be just the ticket for you.
