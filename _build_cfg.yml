@@ -35,4 +35,6 @@ Dir: guides
 Topics:
   - Name: For Authors
     File: user_guide
+  - Name: For Maintainers
+    File: maintainer_guide
 

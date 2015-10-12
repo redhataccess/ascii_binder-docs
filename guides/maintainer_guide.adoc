@@ -1,0 +1,345 @@
+= AsciiBinder for Maintainers
+{product-author}
+{product-version}
+:data-uri:
+:icons:
+
+Need to install AsciiBinder? Check out that section of the link:../guides/user_guide.html#installing-asciibinder[Author's Guide].
+
+Want to learn how to set up and maintain an AsciiBinder based docs repo? Read on...
+
+== Creating a New Repo
+To create a new, bare docs repo that will work with AsciiBinder, run the 'create' command:
+
+----
+$ asciibinder create <repo_dir>
+----
+
+This command does the following things:
+
+. Creates the indicated repo directory
+. Copies the minimal set of necessary files into the repo directory
+. Instantiates the repo directory as a git repository
+
+Be aware that before you can use this repo, at a minimum, you will need to add the generated files to a commit and then commit them to the local repository:
+
+----
+$ git add .
+$ git commit -m "Initial commit on new docs repo"
+----
+
+AsciiBinder doesn't do this for you, because you may want to do some things to the repo or to the generated files before the first commit. Just keep this in mind:
+
+**The `build`, `package` and `watch` commands won't work until there is at least one commit in the new docs repo.**
+
+=== What's with the Underscores?
+If you look in the newly generated repo directory, you will notice a lot of files and directories with underscores in front of their names:
+
+----
+$ asciibinder create foo
+Created new repo in foo.
+
+$ cd foo
+$ ls
+_build_cfg.yml _distro_map.yml _images index-main.html _javascripts _stylesheets _templates welcome
+----
+
+Because the primary purpose of the repo directory is to store documentation, necessary files that are not part of the documentation are made visually distinct with the leading underscore. Documentation authors will need to make changes to `_build_cfg.yml` (as documented in the link:user_guide.html[Author's Guide]), but the rest of the "underscore files" are only of interest to docs system maintainers.
+
+== Distros, Versions, and Sites: _distro_map.yml
+These are the three primary concepts that a maintainer needs to understand as they configure and manage an AsciiBinder-based docs repo:
+
+Distros::
+  Different but very similar versions of the same documentation set ('free' versus 'commercial' as one example). The primary idea being that some amount of the documentation may need to be conditionalized, but for the most part the docs are the same.
+Versions::
+  Specific, published versions of a given _distro_. AsciiBinder uses git branches to capture the state of the docs repo for each version.
+Sites::
+  Collections of one or more _distros_ that will be published to the same website. Every published _version_ of the referenced _distros_ will be published on the site.
+
+AsciiBinder tracks all of these in a single file, called `_distro_map.yml`. Here is the default version of this file, which is copied into your docs repo when you run `asciibinder create`:
+
+----
+---
+ascii_binder: <1>
+  name: AsciiBinder Doc Project
+  author: AsciiBinder Team <team@asciibinder.org>
+  site: main <2>
+  site_name: Home
+  site_url: http://asciibinder.org/
+  branches:
+    master: <3>
+      name: Latest <4>
+      dir: latest <5>
+----
+<1> System name of distro, used when conditionalizing content on a per-distro basis.
+<2> System name of site, used to pick up the correct index file and organize the included distros.
+<3> Git branch name that represents a version of this distro
+<4> User-readable name of this version of this distro
+<5> Directory on the site where this version of this distro should go
+
+The above represents a very simple use case: one distro, one version, and one site to host it. For a more complex example, where mutliple distros, versions and sites are in play, here is a snapshot of the distro map for https://github.com/openshift/openshift-docs[OpenShift documentation]:
+
+----
+---
+openshift-origin: <1>
+  name: OpenShift Origin
+  author: OpenShift Documentation Project <dev@lists.openshift.redhat.com>
+  site: community <2>
+  site_name: OpenShift Community Documentation
+  site_url: https://docs.openshift.org/
+  branches: <3>
+    master:
+      name: Latest
+      dir: latest
+    origin:
+      name: Milestone 5
+      dir: stable
+openshift-online: <1>
+  name: OpenShift Online
+  author: OpenShift Documentation Project <dev@lists.openshift.redhat.com>
+  site: commercial <2>
+  site_name: OpenShift Product Documentation
+  site_url: https://docs.openshift.com/
+  branches:
+    online:
+      name: Latest
+      dir: online
+openshift-enterprise: <1>
+  name: OpenShift Enterprise
+  author: OpenShift Documentation Project <dev@lists.openshift.redhat.com>
+  site: commercial <2>
+  site_name: OpenShift Product Documentation
+  site_url: https://docs.openshift.com/
+  branches:
+    enterprise-3.0:
+      name: '3.0'
+      dir: enterprise/3.0 <4>
+----
+<1> System names of distributions
+<2> System names of sites
+<3> A distribution with multiple versions represented by git branches
+<4> A version of a distro where the document root is two levels deep on the site
+
+Every time you want to add a new distro or distro version to your published documentation, and every time you want to redistribute distros across one or more web sites, you will need to modify the `_distro_map.yml` file accordingly.
+
+== Sites and Homepages
+Websites generated by AsciiBinder are static, meaning that they are generated as a collection of related HTML files that can be copied to any webserver. For every site that you define in the `_distro_map.yml` file, you will need to create a separate home page. All of the home pages live in the root directory of your docs repo and follow a specific naming convention:
+
+----
+index-<site>.html
+----
+
+Where `site` is the site system name from the distro map file. As an example, when you create a new docs repo with `asciibinder create`, the repo contains an `index-main.html` file, which corresponds with the "main" site identifier in the new repo's distro map. If you have multiple distros that are published on different sites, you'll have one index file for each.
+
+In order to give site designers maximum flexiblity in creating the docs site homepages, these pages are raw HTML and are not handled by an AsciiDoc generator at all. The sample homepage that is placed by an `asciibinder create` action uses http://getbootstrap.com/[Bootstrap] to enable some styling and dynamic features, but there's nothing to prevent you from completely rewriting this page.
+
+While AsciiBinder makes use of git branches to track different versions of your docs, **the site index.html files _always_ come from the master branch.** The assumption here is that since the site homepage is not specifically linked to a version of your documentation, that it doesn't make sense to look at the versions of site index pages that get stored in the various version branches of your repo.
+
+== Site File Organization
+When you run `asciibinder package`, a directory called `_package` is created in your docs repo if it doesn't already exist. Under that directory is a directory for each site defined in `_distro_map.yml`. The general layout looks like this:
+
+----
+_package/
+   |
+   +-> site1/
+   +-> siteN/
+         |
+         +-> index.html
+         +-> sitemap.xml
+         +-> _stylesheets/
+         +-> _javascripts/
+         +-> _images/
+         +-> versionA/
+         +-> versionB/
+                |
+                +-> _stylesheets/
+                +-> _javascripts/
+                +-> _images/
+                +-> topic_group1/
+                |        |
+                |        +-> topic1
+                |        +-> topicN
+                |
+                +-> topic_groupX/
+                         |
+                         +-> subtopic_groupN/
+                                    |
+                                    +-> subtopicN
+----
+
+There are a few items to note here that may otherwise throw you off.
+
+=== Asset Directory Names
+The _stylesheets, _javascripts, and _images directories from your docs repo appear in two places:
+
+. In the root directory of the site
+. In the root directory of each docs version
+
+The primary reasoning here is this:
+
+The site homepage will always be using assets from the master branch, so the asset directories in the site root are always the master branch copies. Meanwhile, different versions of the documentation set will be using site assets relevant to that version, so the version specific copies of those directories are copied from the version branch.
+
+=== Landing Pages
+Aside frome the site homepage, AsciiBinder doesn't generate or support the idea of a per distro + version landing page. Instead, you will want to set up some redirect rules on the webserver where your docs set is hosted.
+
+By convention, AsciiBinder docs repos use a topic file called 'index' under a topic group called 'welcome' to serve as this landing page, and then use a redirect rule to send users there when they try some of the more obvious shortcuts. For instance, on https://docs.openshift.org/[docs.openshift.org]:
+
+* Every version directory redirects to the welcome/index page: https://docs.openshift.org/latest/[docs.openshift.org/latest/] => docs.openshift.org/latest/welcome/index.html
+* Every topic group directory redirects to the 'index' topic in that group dir.
+
+Depending on which web server you are running, and the organization of your documentation, your specific redirect rules will vary.
+
+== Styling Your Docs
+AsciiBinder uses https://rubygems.org/gems/tilt/[Tilt] and http://ruby-doc.org/stdlib-2.2.3/libdoc/erb/rdoc/ERB.html[ERB] to give you a fair amount of flexibility in the appearance of your docs. The only specific expectation of AsciiBinder is that you will have a page called `page.html.erb` under the `_templates` directory in your docs repo.
+
+NOTE: You will nead to learn a little about Ruby templating to make this all work, but there are some good examples in the templates used by https://github.com/nhr/asciibinder-docs/tree/master/_templates[the AsciiBinder docs repo] and the https://github.com/openshift/openshift-docs/tree/master/_templates[OpenShift docs repo].
+
+Into every page, AsciiBinder passes the following variables:
+
+`distro_key`::
+  The system name of the current distro.
+`distro`::
+  The display name of the current distro.
+`version`::
+  The display name of the current version.
+`site_name`::
+  The display name of the current site.
+`group_id`::
+  A unique ID for the current group based on CamelCasing of the group dislay name.
+`group_title`::
+  The display name of the current topic group.
+`subgroup_id`::
+  If this topic is part of a subgroup, a unique ID for the current subgroup based on CamelCasing, in the form `ParentGroupID::SubGroupID`. Otherwise `nil`.
+`subgroup_title`::
+  If this topic is part of a subgroup, the display name of the subgroup. Otherwise `nil`.
+`topic_id`::
+  A unique ID for the current topic based on CamelCasing, in the form `ParentGroupID::TopicName`. Note that if this is a subtopic, the ID will be `MainGroupID::SubGroupID::TopicName`.
+`topic_title`::
+  The display name of the current topic.
+`article_title`::
+  The title text from the first line of the topic file.
+`content`::
+  The rendered HTML content of the topic file without headers, footers, or main title.
+`navigation`::
+  A Ruby array containing the complete navigation information for the docs set. (See Working with the Navigation Array)
+`css_path`::
+  The relative path to the `_stylesheets` directory from the current topic.
+`javascripts_path`::
+  The relative path to the `_javascripts` directory from the current topic.
+`images_path`::
+  The relative path to the `_images` directory from the current topic.
+`template_path`::
+  The full path to the repo `_templates` directory, for invoking other templates from `page.html.erb`.
+`site_home_path`::
+  The complete relative path to the site homepage, including `index.html`.
+
+These values can be used to supply topic content, navigational controls and other dyanmic page elements.
+
+=== Working with the Navigation Array
+In the AsciiBinder docs repo, the `page.html.erb` template hands off the work of rendering the left-hand navigational controls to a sub-template called https://github.com/nhr/asciibinder-docs/blob/master/_templates/_nav.html.erb[`_nav.html.erb`]. The page template passes along the `navigation` variable into this subtemplate.
+
+The navigation structure for an early version of this docs set looked like this:
+
+----
+[
+  { :name   => "Project Info",
+    :id     => "ProjectInfo",
+    :topics => [
+                 { :path => "../welcome/index.html",
+                   :name => "Welcome",
+                   :id   => "ProjectInfo::Welcome"
+                 },
+                 { :path => "../welcome/philosophy.html",
+                   :name => "Philosophy",
+                   :id   => "ProjectInfo::Philosophy"
+                 }
+               ]
+  },
+  { :name   => "Guides",
+    :id     => "Guides",
+    :topics => [
+                 { :path => "../guides/user_guide.html",
+                   :name => "For Authors",
+                   :id   => "Guides::ForAuthors"
+                 }
+                 { :path => "../guides/maintainer_guide.html",
+                   :name => "For Maintainers",
+                   :id   => "Guides::ForMaintainers"
+                 }
+               ]
+  }
+]
+----
+
+If this site used subtopic groups, then the navigation structure for the parent topic might look like this:
+
+----
+[
+  { :name   => "Parent Group",
+    :id     => "ParentGroup",
+    :topics => [
+                 { :name   => "Subtopic Group",
+                   :id     => "ParentGroup::SubTopicGroup",
+                   :topics => [ <1>
+                                { :path => "../../parentdir/subdir/subtopic.html",
+                                  :name => "Sub Topic",
+                                  :id   => "ParentGroup::SubTopicGroup::SubTopic"
+                                }
+                              ]
+                 }
+               ]
+  }
+]
+----
+<1> The presence of the `:topics` key within a topic item tells us that this is a subtopic group.
+
+With this in mind, use the `_nav.html.erb` file linked above as a reference for how to iterate through the `navigation` object and render navigation controls on your pages.
+
+== Creating a New Version (Branch) of Your Docs
+Using AsciiBinder, you can generate multiple distros (variations) of your documentation from a single git branch. However, as you release new versions of your project or product, you will want to capture the state of the documentation in a way that is easy to rebuild and easy to fix with errata and late-to-the-release changes.
+
+=== Creating the Branch
+The actual process of creating the branch is the standard process for branch creation under git:
+
+----
+$ git checkout -b <new_branch_name>
+----
+
+As a best practice, especially when your docs set supports multiple distros, consider using a branch name like:
+
+----
+<distro_name>-<version_number>
+----
+
+This way, as you create branches for different versions of the various distros, you will not be confused about which git branches belong to which distros.
+
+Once the git branch is created, make sure to add information about the new version to the `_distro_map.yml` file **on the master branch**. This is very important, so it is worth repeating:
+
+**When you build or package your docs, AsciiBinder reads `_distro_map.yml` only once - from the working branch (master by default).**
+
+The format of branch entries in the file is as follows:
+
+----
+<distro_name>:
+  ...
+  branches:
+    <git_branch_name>:
+      name: <version display name>
+      dir:  <version site directory name>
+    ...
+----
+
+At build / package time, note that the git branch must be present to actually get generated. AsciiBinder will automatically skip a version of the docs if the associated git branch is not available in the local repo.
+
+=== Making Changes to a Version Branch
+If a correction is made to the the master branch documentation in the form of a https://help.github.com/articles/using-pull-requests/[Pull Request], then the same fix can be applied to a version branch via git https://git-scm.com/docs/git-cherry-pick[cherry-picking].
+
+The process is:
+
+. Commit the change to the master branch
+. Use `git log` to get the commit ID of the change
+. Check out the version branch
+. Use `git cherry-pick <commit_id>` to add the change to the version branch
+
+Depending on the scope of the change and the differences between the version branch and the master branch, attempting the cherry-pick may cause a merge collision. In this instance, it may be easier to submit the correction as a new, separate pull request against the version branch.
+
