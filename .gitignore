@@ -37,3 +37,5 @@ build/
 _preview
 _package
 *.swp
+diag-*.png
+diag-*.png.cache
