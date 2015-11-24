@@ -13,10 +13,9 @@ AsciiBinder is distributed as a Ruby gem, so use the `gem` command to install it
 $ gem install ascii_binder
 ----
 
-But be aware of a few prerequisites:
+But be aware of one additional prerequisite:
 
-1. **Pandoc**: AsciiBinder uses the awesome http://asciidoctor.org/[AsciiDoctor] processor to generate pages, and AsciiDoctor depends upon http://pandoc.org/[Pandoc]. So, make sure `pandoc` is installed on your system.
-2. **Java**: AsciiBinder bundles http://ditaa.sourceforge.net/[ditaa] for ASCII-based diagramming support. However, ditaa depends upon a Java runtime to transform ASCII diagrams into image files. So, make sure you have a JVM installed (http://openjdk.java.net/[OpenJDK] works fine) and set the `$JAVA_HOME` environment variable so that ditaa can find the JVM.
+**Java**: AsciiBinder bundles http://ditaa.sourceforge.net/[ditaa] for ASCII-based diagramming support. However, ditaa depends upon a Java runtime to transform ASCII diagrams into image files. So, make sure you have a JVM installed (http://openjdk.java.net/[OpenJDK] works fine) and set the `$JAVA_HOME` environment variable so that ditaa can find the JVM.
 
 == Making a Copy of an Existing Docs Repo
 If you already know how to use https://git-scm.com/[git], then this is going to sound very familiar. If not, here's the full walk-through:
