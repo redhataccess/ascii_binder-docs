@@ -1,0 +1,134 @@
+= The Distro Map File
+{product-author}
+{product-version}
+:data-uri:
+:icons:
+
+The "distro map" file, `_distro_map.yml`, is a required configuration component for a docs repo managed by AsciiBinder. This is the file that tells AsciiBinder everything it needs to know about:
+
+* Every variation, or _distro_, of your documentation set, and
+* All of the branches in your git repository and how they relate to each distro
+
+Because we are talking about a git repo and because we will almost certainly have multiple branches in that repo, there is one thing that is very important to understand about the distro map file:
+
+NOTE: AsciiBinder only reads `_distro_map.yml` once, from the working branch of your docs repo, and does not reread it while it is processing different git repo branches.
+
+For this reason, it is good practice to ensure that the version of this document that resides in your repository's `master` branch is the canonical reference for the current state of all branches of your repo. When you start a publication build of your site(s), you will want to start it in the branch that is your canonical latest branch, which will be `master` for most people.
+
+== Distro Map Example
+Here is a very basic sample distro map. In this map, we have one distro called "AsciiBinder" with one version called "Latest":
+
+----
+---  <1>
+ascii_binder: <2>
+  name: AsciiBinder
+  author: AsciiBinder Team <team@asciibinder.org>
+  site: main
+  site_name: Home
+  site_url: http://asciibinder.org/
+  branches: <3>
+    master: <4>
+      name: Latest
+      dir: latest <5>
+
+----
+<1> Each distro configuration is preceeded by this three-hash (`---`) record delimiter.
+<2> This "distro key" must be unique for each variation of your docs.
+<3> Each distro will be associated with at least one git branch.
+<4> Branch records are keyed to their actual git branch name
+<5> In the generated HTML website, the branch will be published under this directory
+
+When you create a new docs repo with `asciibinder create`, a similar map is created for you in `_distro_map.yml`.
+
+== Distro Map Reference
+Here is a complete listing of settings supported in the distro map file.
+
+=== Distro Record Settings
+Each distro record must contain all of the following settings:
+
+`<distro_key>`::
+  Each distro record is identified by a key that must be unique. This key must satisfy the formatting rules required for http://asciidoctor.org/docs/user-manual/#attribute-restrictions[attributes in AsciiDoc], because this key will be _used_ as an attribute in AsciiDoc. Any time you want to conditionalize your document in a way that is specific to this distro, you can use this key in conjunction with http://asciidoctor.org/docs/user-manual/#ifdef-directive[AsciiDoc `ifdef::` directives] to accomplish that.
+
+The rest of theses settings are sub-settings under each distro key:
+
+`name`::
+  This is the display name of the distro. In the AsciiDoc topic files, this value is available as `product-title`. In the HTML ERB templates, this is available as `<%= distro %>`.
+`author`::
+  This is the author name for the distro. In the AsciiDoc topic files, this value is exposed as `product-author`.
+`site`::
+  This is a unique key used to identify the website to which this distro will be published. When you run `asciibinder package` to produce publish-ready static HTML, every distro with the same `site` value will be assembeld to be published with the same website. Conversely, distros with different site keys will be packaged for distribution to separate sites.
+`site_name`::
+  This is the display name of the website where the distro will be published. This is available in the HTML ERB templates as `<%= site_name %>`.
+`site_url`::
+  This is the web address of the site where the distro will be published. This is available in the HTML ERB templates as `<%= site_url %>`.
+`branches`::
+  This key references a list of branch records. Each distro must contain at least one branch record in this list. Every branch associated with a distro represents a different _version_ of the distro. Branch record contents are described in Branch Record Settings.
+
+=== Branch Record Settings
+Each branch record must contain the settings listed as required, and may contain the optional settings as well.
+
+`<git_branch_name>`::
+  Each branch record is identified by an actual git branch name. As AsciiBinder runs, it will actually change between branches in your local git repo to produce different distro/branch combintations of your documentation set. The same branch can be associated with multiple distros; for instance, the `master` branch could be included for multiple distros as the "Latest" version of each distro.
+
+The rest of theses settings are sub-settings under each git branch name:
+
+`name` (required)::
+  This is the display name of the branch (think "version name"). In the HTML ERB templates, this is available as `<%= version %>`.
+`dir` (required)::
+  This is the target directory for this distro/branch copy of the complete docs set. This should be expressed as a relative path from the root directory of your website, and should only include URI-legal characters.
+`distro-overrides` (optional)::
+  The `name` and `author` values of the distro record can be overridden on a branch-by-branch basis. As an example, this is useful for a situation where your distro changes names from one version to the next, and you want to preserve the old name for use with the older versions.
+
+.Example usage of `distro-overrides`
+====
+Initially, the fine folks at "p9000.com" have a product called Product 9000, and they've released two versions:
+
+----
+---
+product-9000:
+  name: Product 9000
+  author: Product 9000 Crew <crew@p9000.com>
+  site: commercial
+  site_name: Home
+  site_url: https://docs.p9000.com/
+  branches:
+    version-1.0:
+      name: v1.0
+      dir: product-9000/1.0
+    version-2.0:
+      name: v2.0
+      dir: product-9000/2.0
+----
+
+Now they are changing the product name for the next version, but are still planning to keep the docs for the previous versions around. Here is the recommended approach:
+
+----
+---
+product-9000: <1>
+  name: Product 9001 <2>
+  author: Product 9001 Crew <crew@p9000.com> <2>
+  site: commercial
+  site_name: Home
+  site_url: https://docs.p9000.com/
+  branches:
+    version-1.0:
+      name: v1.0
+      dir: product-9000/1.0
+      distro-overrides: <3>
+        name: Product 9000
+        author: Product 9000 Crew <crew@p9000.com>
+    version-2.0:
+      name: v2.0
+      dir: product-9000/2.0
+      distro-overrides: <3>
+        name: Product 9000
+        author: Product 9000 Crew <crew@p9000.com>
+    version-3.0:
+      name: v3.0
+      dir: product-9001/3.0
+----
+<1> The distro key does not _need_ to change. It is visible to contributors but is not visible in the finished product, and in large doc sets that change could be pretty painful.
+<2> The overall distro record gets the _new_ product name and author.
+<3> The branches of the _previous_ versions get the overrides. This way, when support for them is eventually dropped, what remains in the distro record is the "new normal".
+
+====
