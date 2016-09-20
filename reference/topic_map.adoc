@@ -1,0 +1,170 @@
+[[top]]
+= The Topic Map File
+{product-author}
+{product-version}
+:data-uri:
+:icons:
+
+The "topic map" file, `_topic_map.yml`, is a required configuration component for a docs repo managed by AsciiBinder. This is the file that tells AsciiBinder everything it needs to know about:
+
+* Which `.adoc` topic files in the repo should be included in any _distro_ of the docs
+* What the ordering of these topic files should be in nvaigation elements
+* What the short names of each topic should be in the navigation elements
+
+Because we are talking about a git repo and because we will almost certainly have multiple branches in that repo, there is one thing that is very important to understand about the topic map file:
+
+NOTE: As AsciiBinder runs, it re-reads `_topic_map.yml` _every time_ it changes from one git branch to the next. This is done to account for the fact that contents and orgnization of your documentation may change from release to release, ensuring that the content and organization of previous releases will remain static even as you make changes in the master branch of your git repository.
+
+== Opinionated Organization
+The layout of the topic map combined with the bahvior of AsciiBinder implies a specific organization of directories and topic files:
+
+1. There are no topic files in the root directory of the repo.
+2. The maximum depth of topics is two (2) directories.
+
+These may seem like arbitrarily limiting rules, but they came from looking at a real-world use of AsciiBinder. The current largest use of AsciiBinder is for the https://github.com/openshift/openshift-docs[openshift-docs] repo, which contains over two hundred topics. Managing a documentation set of that size helped bring a number of best practices to light, some of which are reflected in AsciiBinder's overall design.
+
+**No topic files in the root directory** +
+The root directory of your docs repo is reserved for metadata and for site-wide landing pages. These landing pages are not asciidoc files; rather they are straight HTML.
+
+**Maximum depth of topics is two directories** +
+The problem with the argument of "why can't you add support for one more level?" is that it can and will be made regardless of how many levels are already supported. AsciiBinder currently supports two levels. This artificial limit pays off when you have a large docs set and decide to start reorganizing topics.
+
+== Topic Map Example
+Here is a very basic sample topic map. In this map, we have two topic _groups_ (directories) each containing a few topics (asciidoc files). The second topic group also includes a topic _subgroup_ that contains some files of its own:
+
+----
+---  <1>
+Name: Project Info <2>
+Dir: welcome <3>
+Topics: <4>
+  - Name: Welcome <5>
+    File: index <6>
+  - Name: Philosophy
+    File: philosophy
+
+---
+Name: Guides
+Dir: guides
+Topics:
+  - Name: For Authors
+    File: user_guide
+  - Name: For Maintainers
+    File: maintainer_guide
+  - Name: Object Reference <7>
+    Dir: objects <8>
+    Topics:
+      - Name: Squares
+        File: squares
+      - Name: Triangles
+        File: triangles
+----
+<1> Each topic group configuration is preceeded by this three-hash (`---`) record delimiter.
+<2> The display name of this topic group, which will appear in navigation elements.
+<3> The directory of this topic group within the git repo.
+<4> Each topic group will contain at least one topic (asciidoc file).
+<5> The display name of this topic for use in navigation elements.
+<6> The filename of the actual asciidoc file (the `.adoc` extension is implicitly assumed)
+<7> This topic is actually a topic "subgroup". Instead of a "File" value it includes a "Dir" value and a "Topics" list.
+<8> This subgroup directory "objects" is expected to be a directory under the parent group directory "guides".
+
+== Conditional Use of Topics and Topic Groups
+One of the primary differences between the _distros_ (variations) of your documentation sets is that some may include topics or even whole groups of topics that others don't. For example, if your documentation set was all about an airplane, you might want to write everything about flying and repairing the airplane in a single repo. But when you publish your docs, you might want to publish the repair-related topics as one distro and the flying-related topics as another.
+
+AsciiBinder supports this by enabling you to "distro tag" topics and topic groups within your topic map file through the use of the `Distros:` setting. The distro tags that you use for this purpose are defined in your distro map file.
+
+As an example, continuing the airplane documentation analogy, assume your `_distro_map.yml` file looks like this:
+
+.Airplane Docs `_distro_map.yml` file extract
+----
+---
+piloting-guide: <1>
+  name: Flymaster 9000 Piloting Guide
+  ...
+
+---
+repair-guide: <2>
+  name: Flymaster 9000 Repair Guide
+  ...
+
+----
+<1> The `piloting-guide` distro key, which we'll use to denote flying-related content
+<2> The `repair-guide` distro key, which we'll use to denote repair-related content
+
+Then your topic map file may look like this:
+
+.Airplane Docs `_topic_map.yml` file
+----
+---
+Name: The Flymaster 9000
+Dir: welcome
+Topics:
+  - Name: Welcome
+    File: index
+  - Name: What is an Airplane?
+    File: what_is_an_airplane
+
+---
+Name: Airplane Concepts
+Dir: airplane_concepts
+Topics:
+  - Name: Passenger Compartment
+    File: passenger_compartment
+  - Name: Engine Compartment
+    File: engine_compartment
+    Distros: repair-guide <1>
+  - Name: Cockpit
+    File: cockpit
+
+---
+Name: Air Navigation
+Dir: air_navigation
+Distros: piloting-guide <2>
+Topics:
+  - Name: Calculating Ground Speed
+    File: ground_speed
+  - Name: Using a Compass
+    File: compass_usage
+----
+<1> This topic-level distro tag ensures that the "Engine Compartment" topic will only appear in the "Repair Guide" distro.
+<2> This topic-group-level distro tag ensures that the "Air Navigation" topic group will only appear in the "Piloting Guide distro.
+
+When a topic or a topic group _excludes_ the `Distros:` setting, this is the same as saying `Distros: all`. The "all" value is a reserved keyword meaning "valid for every defined distro".
+
+The `Distros:` setting also supports a comma delimited list of values:
+
+----
+Distros: distro-key-1,distro-key-2
+----
+
+AsciiBinder also supports the use of wildcards in distro keys inside of the topic map file. For instance, per our airplane example, this entry would be automatically expanded to `piloting-guide,repair-guide`:
+
+----
+Distros: *-guide
+----
+
+Distro keys can also be used to conditionalize content _inside_ of individual topic files; this is discussed in detail in the xref:../guides/user_guide.adoc#top[Writer's Guide].
+
+== Topic Map Reference
+Here is a complete listing of settings supported in the topic map file.
+
+=== Topic Group and Topic Subgroup Settings
+Each topic group record must contain all of the following settings except for `Distros`, which is optional.
+
+`Name`::
+  The display name of this topic group or subgroup. In the HTML ERB templates, this is available as `<%= group_title %>` if this is a group, or `<%= subgroup_title %>` if this is a subgroup.
+`Dir`::
+  The not-full-path directory name of this topic group or subgroup.
+`Distros` (optional)::
+  A comma-delimited list of distro-keys for distros that should include this topic group and any associated topics and topic subgroups.
+`Topics`::
+  The list of topic records. Topic record settings are described in Topic Settings.
+
+=== Topic Settings
+Each topic record must contain all of the following settings except for `Distros`, which is optional.
+`Name`::
+  The display name of this topic. In the HTML ERB templates, this is available as `<%= topic_title %>`.
+`File`::
+  The filename of this topic. Topic filenames in the repo must end in `.adoc`, but in the topic map file the extension can be ommitted.
+`Distros` (optional)::
+  A comma-delimited list of distro-keys for distros that should include this topic.
+
