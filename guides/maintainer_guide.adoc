@@ -204,6 +204,10 @@ Into every page, AsciiBinder passes the following variables:
   The display name of the current version.
 `site_name`::
   The display name of the current site.
+`site_url`::
+  The url of the current site.
+`topic_url`::
+  The preview url of the current topic.  This is a local url, not the url on the website.
 `group_id`::
   A unique ID for the current group based on CamelCasing of the group dislay name.
 `group_title`::
