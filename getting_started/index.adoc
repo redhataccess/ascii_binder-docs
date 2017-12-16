@@ -1,4 +1,4 @@
-= {product-title} {product-version} Getting Started
+= Getting Started
 {product-author}
 {product-version}
 :data-uri:
@@ -45,4 +45,4 @@ See the link:https://youtu.be/KhjwnTD4oec?t=19s[CircleCI video] for a demonstrat
 . Push your changes to that repo and CircleCI will automatically create the HTML output. 
 To see the output HTML, navigate to the artifacts tab of the most recent CircleCI build.
 
-For more information on building doc sets, including building locally, see xref:./building.adoc[Building a Doc Set].
+For more information on building doc sets, including building locally, see xref:../getting_started/building.adoc#building-a-doc-set[Building a Doc Set].

@@ -1,10 +1,11 @@
+[[building-a-doc-set]]
 = Building a Doc Set
 {product-author}
 {product-version}
 :data-uri:
 :icons:
 
-Building a doc set involves converting the Asciidoc to HTML using the Asciibinder configuration files.
+Building a doc set involves converting the Asciidoc to HTML using the AsciiBinder configuration files.
 The following options are outlined in this guide:
 
 * xref:building-using-ruby[]
@@ -14,7 +15,9 @@ The following options are outlined in this guide:
 [[building-using-ruby]]
 == Building Locally Using ruby
 
-NOTE: Installing ruby 2.2 as required by AsciiBinder may affect existing ruby applications on your system. To avoid issues, use xref:building-using-docker[].
+NOTE: Installing a supported version of ruby may affect existing ruby applications on your system. To avoid issues, use xref:building-using-docker[] or use `rvm`.
+
+See  xref:../guides/user_guide.adoc#installing-asciibinder[Installing AsciiBinder] for the steps required to install AsciiBinder.
 
 
 
@@ -32,6 +35,20 @@ Docker provides a container based method of building doc sets that only requires
 docker build asciibinder:latest . 
 ----
 
+. Change to the docs directory:
++
+----
+cd <docs_path>
+----
+
+. Use the following command to run the docker container:
++
+----
+docker run -rm -it -v ${PWD}:/docs:z -u $(id -u):$(id -g) asciibinder
+----
++
+The html is generated in the `_preview` directory.
+
 
 [[building-using-cicd]]
 == Building Using CI/CD
@@ -42,9 +59,24 @@ There are many build systems that are used in software including:
 * Travis CI
 * CircleCI
 
-The Quick Start sectio of this doc set describes how to use CircleCI. That process is controlled by the `.circleci\config.yml` file:
+The xref:..\getting_started\index.adoc#[Quick Start] page describes how to use CircleCI. That process is controlled by the `.circleci\config.yml` file:
 ----
-include::..\.circleci\config.yml[]
+version: 2 <1>
+
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.2-node <2>
+    working_directory: ~/docs
+    steps:
+      - checkout
+      - run: gem install ascii_binder
+      - run: asciibinder package
+      - store_artifacts:
+          path: ~/docs/_preview <3>
 ----
 
+<1> You must use CircleCI version 2.
+<2> This is the docker image that is used.
+<3> This is the output directory that contains the HTML.
 
