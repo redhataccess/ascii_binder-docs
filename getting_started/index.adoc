@@ -41,8 +41,8 @@ Topics:
 ----
 . Create an account at link:https://circleci.com/[CirlceCI].
 . Create a CircleCI project pointing at your fork of the ascii_binder_docs repo.
-See the link:https://youtu.be/KhjwnTD4oec?t=19s[CircleCI video] for a demostration. 
+See the link:https://youtu.be/KhjwnTD4oec?t=19s[CircleCI video] for a demonstration. 
 . Push your changes to that repo and CircleCI will automatically create the HTML output. 
 To see the output HTML, navigate to the artifacts tab of the most recent CircleCI build.
 
-For more information on building doc sets, including building locally, see xref:building.adoc[Building a Doc Set].
+For more information on building doc sets, including building locally, see xref:./building.adoc[Building a Doc Set].

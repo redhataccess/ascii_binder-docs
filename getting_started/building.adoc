@@ -1,4 +1,4 @@
-= {product-title} {product-version} Building a Doc Set
+= Building a Doc Set
 {product-author}
 {product-version}
 :data-uri:
@@ -8,9 +8,43 @@ Building a doc set involves converting the Asciidoc to HTML using the Asciibinde
 The following options are outlined in this guide:
 
 * xref:building-using-ruby[]
-* Building using docker
-* Building using CI/CD
+* xref:building-using-docker[]
+* xref:building-using-cicd[]
 
 [[building-using-ruby]]
-== Building Using ruby
+== Building Locally Using ruby
+
+NOTE: Installing ruby 2.2 as required by AsciiBinder may affect existing ruby applications on your system. To avoid issues, use xref:building-using-docker[].
+
+
+
+[[building-using-docker]]
+== Building Locally Using Docker
+
+Docker provides a container based method of building doc sets that only requires the installation of docker, and therefore requires minimal minimal configuration change for your system.
+
+. Install docker.
+. Clone the xref:https://github.com/redhataccess/ascii_binder[ascii_binder] repo.
+. Change directory into the repo.
+. Enter the following command to create the docker image:
++
+----
+docker build asciibinder:latest . 
+----
+
+
+[[building-using-cicd]]
+== Building Using CI/CD
+
+There are many build systems that are used in software including:
+
+* Jenkins
+* Travis CI
+* CircleCI
+
+The Quick Start sectio of this doc set describes how to use CircleCI. That process is controlled by the `.circleci\config.yml` file:
+----
+include::..\.circleci\config.yml[]
+----
+
 
