@@ -1,0 +1,16 @@
+= {product-title} {product-version} Building a Doc Set
+{product-author}
+{product-version}
+:data-uri:
+:icons:
+
+Building a doc set involves converting the Asciidoc to HTML using the Asciibinder configuration files.
+The following options are outlined in this guide:
+
+* xref:building-using-ruby[]
+* Building using docker
+* Building using CI/CD
+
+[[building-using-ruby]]
+== Building Using ruby
+

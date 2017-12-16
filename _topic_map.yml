@@ -35,7 +35,8 @@ Dir: getting_started
 Topics:
   - Name: Quick Start
     File: index
-
+  - Name: Building a Doc Set
+    File: building.adoc
 ---
 Name: Guides
 Dir: guides
