@@ -1,0 +1,34 @@
+= {product-title} {product-version} Getting Started
+{product-author}
+{product-version}
+:data-uri:
+:icons:
+
+This guide provides instructions for getting started with AsciiBinder, enabling you to:
+
+* Edit an AsciiBinder repo
+* Render the results to HTML
+
+. Fork the link:https://github.com/redhataccess/ascii_binder-docs[ascii_binder_docs] repo.
+. Create a directory and add an asciidoc file, for example:
++
+----
+doing_stuff
+    └── index.adoc
+----
+. Edit the asciidoc file to include your content, for example, edit `doing_stuff\index.doc`:
++
+----
+= Doing stuff 
+
+It is important to do stuff before you rest. Here are some options:
+
+* eat
+* walk
+* talk
+----
+. Edit the `_topic_map.yml` file to provide navigation for your new content:
++
+----
+
+----

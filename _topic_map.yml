@@ -30,6 +30,13 @@ Topics:
     File: philosophy
 
 ---
+Name: Getting Started
+Dir: getting_started
+Topics:
+  - Name: Quick Start
+    File: index
+
+---
 Name: Guides
 Dir: guides
 Topics:
