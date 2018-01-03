@@ -32,7 +32,7 @@ Docker provides a container based method of building doc sets that only requires
 . Enter the following command to create the docker image:
 +
 ----
-docker build asciibinder:latest . 
+docker build -t asciibinder:latest . 
 ----
 
 . Change to the docs directory:
@@ -44,7 +44,7 @@ cd <docs_path>
 . Use the following command to run the docker container:
 +
 ----
-docker run -rm -it -v ${PWD}:/docs:z -u $(id -u):$(id -g) asciibinder
+docker run --rm -it -v ${PWD}:/docs:z -u $(id -u):$(id -g) asciibinder
 ----
 +
 The html is generated in the `_preview` directory.
