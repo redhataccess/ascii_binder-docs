@@ -8,7 +8,7 @@
 The "topic map" file, `_topic_map.yml`, is a required configuration component for a docs repo managed by AsciiBinder. This is the file that tells AsciiBinder everything it needs to know about:
 
 * Which `.adoc` topic files in the repo should be included in any _distro_ of the docs
-* What the ordering of these topic files should be in nvaigation elements
+* What the ordering of these topic files should be in navigation elements
 * What the short names of each topic should be in the navigation elements
 
 Because we are talking about a git repo and because we will almost certainly have multiple branches in that repo, there is one thing that is very important to understand about the topic map file:
