@@ -200,6 +200,8 @@ Into every page, AsciiBinder passes the following variables:
   The system name of the current distro.
 `distro`::
   The display name of the current distro.
+`branch`::
+  The git branch name of the current distro.
 `version`::
   The display name of the current version.
 `site_name`::
