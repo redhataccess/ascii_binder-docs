@@ -103,7 +103,7 @@ The site packaging action performs three distinct operations:
 
 1. Clean out previously generated content from the `_preview` and `_package` directories
 2. Build the docs as per `asciibinder build`
-3. Based on rules in the `_distro_config.yml` file, selectively copy content from the `_preview` area into the `_package` area on a site-by-site basis.
+3. Based on rules in the `_distro_map.yml` file, selectively copy content from the `_preview` area into the `_package` area on a site-by-site basis.
 
 The result of this is that the `_package` are will contain a subdirectory for each site that is being built, and all of the files in those site directories will be ready for direct copying onto the site's web server.
 
