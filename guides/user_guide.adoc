@@ -49,10 +49,10 @@ $ asciibinder
 === Anatomy of a Build
 When you run a build, AsciiBinder reads two specially named files in your docs repo, and processes the repo accordingly. If your current working branch contains uncommitted changes, those files are stashed before AsciiBinder switches to other branches, and restored at the end of the build operation.
 
-==== The Distribution Config File: _distro_cfg.yml
+==== The Distribution Config File: _distro_map.yml
 The distribution config file tells AsciiBinder which branches in the repo will be processed. For the full details of how this file works, there is an appendix with all of the particulars. At build time, here's the important thing:
 
-**AsciiBinder only reads `_distro_cfg.yml` once: from the current working branch.**
+**AsciiBinder only reads `_distro_map.yml` once: from the current working branch.**
 
 This is important to understand, because AsciiBinder by its nature is going to switch between git branches as it runs. In each branch, the contents of the distribution config file will probably be different. So AsciiBinder assumes that your current working branch is the one that you care about when it comes to building docs sets.
 
