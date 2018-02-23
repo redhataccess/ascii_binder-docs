@@ -56,18 +56,18 @@ The distribution config file tells AsciiBinder which branches in the repo will b
 
 This is important to understand, because AsciiBinder by its nature is going to switch between git branches as it runs. In each branch, the contents of the distribution config file will probably be different. So AsciiBinder assumes that your current working branch is the one that you care about when it comes to building docs sets.
 
-==== The Build Config File: _build_cfg.yml
-The build config file tells AsciiBinder which _topic groups_ and _topics_ to generate. As with the distribution config file, there is an appendix that details the composition of this file. However, unlike with the distribution config file:
+==== The Topic Map File: _topic_map.yml
+The topic map file tells AsciiBinder which _topic groups_ and _topics_ to generate. As with the distribution config file, there is an appendix that details the composition of this file. However, unlike with the distribution config file:
 
-**AsciiBinder re-reads `_build_cfg.yml` for every git branch.**
+**AsciiBinder re-reads `_topic_map.yml` for every git branch.**
 
 This should be pretty self-explanatory. Back when you published version X of your docs, you had one set of files; now that you're on to version Y, the files may have been shuffled added to, removed, etc. So each time AsciiBinder switches branches, it re-reads this file to find out which files to process.
 
 And while we're on the subject:
 
-**AsciiBinder only generates files that are listed in the `_build_cfg.yml` file.**
+**AsciiBinder only generates files that are listed in the `_topic_map.yml` file.**
 
-This is important to understand, because simply adding an `.adoc` file to your repo will not automatically add it to your generated output. You also need to create an entry for it in the build config file. When you run AsciiBinder, it will warn you about files on each branch that are not included in the branch's build config file, but it will not generate them.
+This is important to understand, because simply adding an `.adoc` file to your repo will not automatically add it to your generated output. You also need to create an entry for it in the topic map file. When you run AsciiBinder, it will warn you about files on each branch that are not included in the branch's topic map file, but it will not generate them.
 
 ==== Build Output
 AsciiBinder starts by reading the distro config file and then it processes docs multiple times - once for every distribution defined in the distro config file, multiplied by every branch. You can see the HTML produced by this process under the `_preview` directory in the repo.

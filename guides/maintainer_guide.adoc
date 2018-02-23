@@ -41,10 +41,10 @@ Created new repo in foo.
 
 $ cd foo
 $ ls
-_build_cfg.yml _distro_map.yml _images index-main.html _javascripts _stylesheets _templates welcome
+_distro_map.yml _images index-main.html _javascripts _stylesheets _templates _topic_map.yml welcome
 ----
 
-Because the primary purpose of the repo directory is to store documentation, necessary files that are not part of the documentation are made visually distinct with the leading underscore. Documentation authors will need to make changes to `_build_cfg.yml` (as documented in the link:user_guide.html[Author's Guide]), but the rest of the "underscore files" are only of interest to docs system maintainers.
+Because the primary purpose of the repo directory is to store documentation, necessary files that are not part of the documentation are made visually distinct with the leading underscore. Documentation authors will need to make changes to `_topic_map.yml` (as documented in the link:user_guide.html[Author's Guide]), but the rest of the "underscore files" are only of interest to docs system maintainers.
 
 == Distros, Versions, and Sites: _distro_map.yml
 These are the three primary concepts that a maintainer needs to understand as they configure and manage an AsciiBinder-based docs repo:
