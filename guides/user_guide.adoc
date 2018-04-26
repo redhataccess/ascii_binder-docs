@@ -31,6 +31,13 @@ If the project that you are working in already has version branches, then you wi
 $ git checkout -b <local_branch_name> <remote_repo>/<remote_branch_name>
 ----
 
+== Writing the Docs
+
+AsciiBinder provides the following entity for use in your AsciiDoc source:
+
+`repo_path`::
+  The relative path to the adoc source file from the repository root.
+
 == Building the Docs
 Transforming an AsciiBinder repo into a bunch of documentation is pretty easy:
 

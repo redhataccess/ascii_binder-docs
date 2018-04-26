@@ -232,6 +232,8 @@ Into every page, AsciiBinder passes the following variables:
   The full path to the repo `_templates` directory, for invoking other templates from `page.html.erb`.
 `site_home_path`::
   The complete relative path to the site homepage, including `index.html`.
+`repo_path`::
+  The relative path to the adoc source file from the repository root.
 
 These values can be used to supply topic content, navigational controls and other dyanmic page elements.
 
