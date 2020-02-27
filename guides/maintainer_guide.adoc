@@ -232,6 +232,16 @@ Into every page, AsciiBinder passes the following variables:
   The full path to the repo `_templates` directory, for invoking other templates from `page.html.erb`.
 `site_home_path`::
   The complete relative path to the site homepage, including `index.html`.
+`breadcrumb_root`::
+  Root element for breadcrumb
+`breadcrumb_group`::
+  Current group for breadcrumb
+`breadcrumb_topic`::
+  Current topic for breadcrumb
+`breadcrumb_subgroup_block`::
+  HTML with ctive list item of the breadcrumb_subgroup, `<li class="hidden-xs active">#{args[:breadcrumb_subgroup]}</li>`
+`subtopic_shim`::
+  Path to parent topic, specifically `../`
 
 These values can be used to supply topic content, navigational controls and other dyanmic page elements.
 
@@ -342,4 +352,3 @@ The process is:
 . Use `git cherry-pick <commit_id>` to add the change to the version branch
 
 Depending on the scope of the change and the differences between the version branch and the master branch, attempting the cherry-pick may cause a merge collision. In this instance, it may be easier to submit the correction as a new, separate pull request against the version branch.
-
