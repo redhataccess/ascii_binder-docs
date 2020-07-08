@@ -22,10 +22,10 @@ Here is a very basic sample distro map. In this map, we have one distro called "
 ---  <1>
 ascii_binder: <2>
   name: AsciiBinder
-  author: AsciiBinder Team <team@asciibinder.org>
+  author: AsciiBinder Team <team@asciibinder.net>
   site: main
   site_name: Home
-  site_url: http://asciibinder.org/
+  site_url: https://asciibinder.net/
   branches: <3>
     master: <4>
       name: Latest
