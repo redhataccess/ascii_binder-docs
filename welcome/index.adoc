@@ -11,7 +11,4 @@ Have a look at the nav bar learn about how easy it is to manage complex docs set
 == Need Help?
 If you look over the docs and still feel like you need a hand, you can reach out to the AsciiBinder maintainers a few different ways:
 
-* Join our http://groups.google.com/group/asciibinder[mailing list]
-* Find us on IRC at FreeNode, http://webchat.freenode.net/?randomnick=1&channels=asciibinder&uio=d4[#asciibinder] channel
 * Open an https://github.com/redhataccess/ascii_binder/issues[issue on GitHub]
-
