@@ -77,7 +77,7 @@ ascii_binder: <1>
 <4> User-readable name of this version of this distro
 <5> Directory on the site where this version of this distro should go
 
-The above represents a very simple use case: one distro, one version, and one site to host it. For a more complex example, where mutliple distros, versions and sites are in play, here is a snapshot of the distro map for https://github.com/openshift/openshift-docs[OpenShift documentation]:
+The above represents a very simple use case: one distro, one version, and one site to host it. For a more complex example, where mutliple distros, versions and sites are in play, here is a snapshot of the distro map for https://github.com/openshift/openshift-docs/blob/master/_distro_map.yml[OpenShift documentation]:
 
 ----
 ---
@@ -342,4 +342,3 @@ The process is:
 . Use `git cherry-pick <commit_id>` to add the change to the version branch
 
 Depending on the scope of the change and the differences between the version branch and the master branch, attempting the cherry-pick may cause a merge collision. In this instance, it may be easier to submit the correction as a new, separate pull request against the version branch.
-
