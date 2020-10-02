@@ -126,3 +126,17 @@ $ asciibinder clean
 
 Note that this happens automatically when you run `asciibinder package`
 
+== Reference
+
+AsciiBinder will substitute the following attributes with values from the `_distro_map.yml` file:
+
+.Substitutions
+|===
+|**AsciiDoc Attribute** |**`_distro_map.yml` Key**
+|`\{product-title\}`
+|`name:` (distro name)
+|`\{product-version\}`
+|`name:` (branch name)
+|`\{product-author\}`
+|`author:`
+|===
