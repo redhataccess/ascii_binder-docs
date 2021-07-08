@@ -30,6 +30,14 @@ Topics:
     File: philosophy
 
 ---
+Name: Getting Started
+Dir: getting_started
+Topics:
+  - Name: Quick Start
+    File: index
+  - Name: Building a Doc Set
+    File: building
+---
 Name: Guides
 Dir: guides
 Topics:

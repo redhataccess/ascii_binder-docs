@@ -1,0 +1,13 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.2-node
+    working_directory: ~/docs
+    steps:
+      - checkout
+      - run: gem install ascii_binder
+      - run: asciibinder package
+      - store_artifacts:
+          path: ~/docs/_preview

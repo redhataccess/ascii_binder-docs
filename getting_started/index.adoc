@@ -1,0 +1,48 @@
+= Getting Started
+{product-author}
+{product-version}
+:data-uri:
+:icons:
+
+This guide provides instructions for getting started with AsciiBinder, enabling you to:
+
+* Edit an AsciiBinder repo
+* Render the results to HTML
+
+This procedure assumes you are familiar with Asciidoc and git:
+
+. Fork the link:https://github.com/redhataccess/ascii_binder-docs[ascii_binder_docs] repo.
+. Create a directory and add an asciidoc file, for example:
++
+----
+doing_stuff
+    └── index.adoc
+----
+. Edit the asciidoc file to include your content, for example, edit `doing_stuff\index.doc`:
++
+----
+= Doing stuff 
+
+It is important to do stuff every day. Here are some options:
+
+* eat
+* walk
+* talk
+----
+. Edit the `_topic_map.yml` file to provide navigation for your new content:
++
+----
+---
+Name: Doing Stuff
+Dir: doing_stuff
+Topics:
+  - Name: Doing Stuff
+    File: index
+----
+. Create an account at link:https://circleci.com/[CirlceCI].
+. Create a CircleCI project pointing at your fork of the ascii_binder_docs repo.
+See the link:https://youtu.be/KhjwnTD4oec?t=19s[CircleCI video] for a demonstration. 
+. Push your changes to that repo and CircleCI will automatically create the HTML output. 
+To see the output HTML, navigate to the artifacts tab of the most recent CircleCI build.
+
+For more information on building doc sets, including building locally, see xref:../getting_started/building.adoc#building-a-doc-set[Building a Doc Set].
